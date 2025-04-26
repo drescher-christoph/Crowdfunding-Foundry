@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import "tailwindcss";
+
+/* Benutzerdefinierte Farben & Fonts */
+@layer base {
+  :root {
+    --color-primary: #11162a; /* Blau für Buttons */
+    --color-secondary: #3b3a80; /* Orange für Bitcoin */
+    --color-background: #0D0F1A; /* Dunkler Hintergrund */
+    --color-card: #181B2D; /* Card Hintergrund */
+    --color-logo: #9146ff; /* Logo Farbe */
+    --color-text-primary: #FCFDF2; /* Helle Schrift */
+    --color-text-secondary: #B0B3D6; /* Dezenter Text */
+    --color-highlight: #8FA6FF; /* Highlights */
+    
+    --font-inter: "Inter", sans-serif;
+    --font-boldonse: "Boldonse", system-ui;
+    --font-poppins: "Poppins", sans-serif;
+  }
+}
+
+
+/* Tailwind-Klassen erweitern */
+@layer utilities {
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+  .bg-background {
+    background-color: var(--color-background);
+  }
+  .bg-card {
+    background-color: var(--color-card);
+  }
+  .bg-tertiary {
+    background-color: var(--color-logo);
+  }
+
+  /* Gradients */
+  .from-primary {
+    --tw-gradient-from: var(--color-primary) var(--tw-gradient-from-position);
+  }
+  
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+  .text-highlight {
+    color: var(--color-highlight);
+  }
+  .text-logo {
+    color: var(--color-logo);
+  }
+
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+  .font-boldonse {
+    font-family: var(--font-boldonse);
+  }
+  .font-poppins {
+    font-family: var(--font-poppins);
+  }
+}
