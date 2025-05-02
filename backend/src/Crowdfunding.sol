@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract Crowdfunding {
-
     error CampaignEnded();
     error InvalidTierIndex();
     error IncorrectFundingAmount();
@@ -27,19 +26,19 @@ contract Crowdfunding {
 
     CampaignState public state;
 
-    struct FundTier {
+    struct Tier {
         string name;
         uint256 amount;
-        string description;
         uint256 backers;
     }
+
 
     struct Supporter {
         uint256 totalContributed;
         mapping(uint256 => bool) fundedTiers;
     }
 
-    FundTier[] public tiers;
+    Tier[] public tiers;
     mapping(address => Supporter) public supporters;
 
     event CampaignFunded(
@@ -49,7 +48,7 @@ contract Crowdfunding {
     );
     event FundsWithdrawn(address indexed owner, uint256 amount);
     event FundsRefunded(address supporter, uint256 amount);
-    event FundTierCreated(string tierName, uint256 amount, string description);
+    event FundTierCreated(string tierName, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can call this function");
@@ -98,10 +97,9 @@ contract Crowdfunding {
     function fund(uint256 _tierIndex) public payable campaignOpen {
         if (block.timestamp >= deadline) revert CampaignEnded();
         if (_tierIndex >= tiers.length) revert InvalidTierIndex();
-        if (msg.value != tiers[_tierIndex].amount)
+        if (msg.value < tiers[_tierIndex].amount)
             revert IncorrectFundingAmount();
 
-        tiers[_tierIndex].backers++;
         supporters[msg.sender].totalContributed += msg.value;
         supporters[msg.sender].fundedTiers[_tierIndex] = true;
 
@@ -132,21 +130,30 @@ contract Crowdfunding {
         supporters[msg.sender].totalContributed = 0;
         payable(msg.sender).transfer(balance);
         emit FundsRefunded(msg.sender, balance);
-
     }
 
-    function createFundTier(
-        string memory _tierName,
-        uint256 _amount,
-        string memory _desc
-    ) public onlyOwner campaignOpen {
-        require(_amount > 0, "Amount must be greater than 0");
-        tiers.push(FundTier(_tierName, _amount, _desc, 0));
+    function addTier(
+        string memory _name,
+        uint256 _amount
+    ) public onlyOwner {
+        require(_amount > 0, "Amount must be greater than 0.");
+        tiers.push(Tier(_name, _amount, 0));
 
-        emit FundTierCreated(_tierName, _amount, _desc);
+        emit FundTierCreated(_name, _amount);
+    }
+
+    function removeTier(uint256 _index) public onlyOwner {
+        require(_index < tiers.length, "Tier does not exist.");
+        tiers[_index] = tiers[tiers.length -1];
+        tiers.pop();
     }
 
     function getTiersCount() public view returns (uint256) {
         return tiers.length;
     }
+
+    function getTiers() public view returns (Tier[] memory) {
+        return tiers;
+    }
+
 }

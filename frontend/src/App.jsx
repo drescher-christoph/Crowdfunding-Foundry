@@ -191,7 +191,7 @@ function App() {
 
                   {/* Route für Post-Details */}
                   <Route
-                    path="/posts/:postId"
+                    path="/campaigns/:campaignId"
                     element={
                       <>
                         <DetailView />

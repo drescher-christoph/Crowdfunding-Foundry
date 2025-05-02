@@ -85,8 +85,8 @@ contract CrowdfundingFactoryTest is Test {
         );
         (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
-        campaign.createFundTier("Tier 1", 0.5 ether, "Reward 1");
-        campaign.createFundTier("Tier 2", 0.75 ether, "Reward 2");
+        campaign.addTier("Tier 1", 0.5 ether);
+        campaign.addTier("Tier 2", 0.75 ether);
         vm.stopPrank();
 
         assertEq(campaign.owner(), user1);
@@ -119,7 +119,7 @@ contract CrowdfundingFactoryTest is Test {
         );
         (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
-        campaign.createFundTier("Tier 1", 0.5 ether, "Reward 1");
+        campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();
 
         vm.startPrank(user2);
@@ -151,7 +151,7 @@ contract CrowdfundingFactoryTest is Test {
         );
         (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
-        campaign.createFundTier("Tier 1", 0.5 ether, "Reward 1");
+        campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();
 
         vm.startPrank(user2);
@@ -177,7 +177,7 @@ contract CrowdfundingFactoryTest is Test {
         );
         (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
-        campaign.createFundTier("Tier 1", 0.5 ether, "Reward 1");
+        campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();
 
         vm.startPrank(user2);

@@ -23,7 +23,7 @@ contract InteractionsTest is Test {
 
     function test_OwnerCanCreateTier() public {
         Interactions deployedCampaign = new Interactions();
-        deployedCampaign.createTier(address(campaign), "Tier 1", 0.01 ether, "Reward 1");
+        deployedCampaign.addTier(address(campaign), "Tier 1", 0.01 ether);
 
         uint256 tiersCount = campaign.getTiersCount();
 
@@ -32,8 +32,8 @@ contract InteractionsTest is Test {
 
     function test_UserCanFundTier() public {
         Interactions deployedCampaign = new Interactions();
-        deployedCampaign.createTier(address(campaign), "Tier 1", 0.01 ether, "Reward 1");
-        deployedCampaign.createTier(address(campaign), "Tier 2", 0.025 ether, "Reward 2");
+        deployedCampaign.addTier(address(campaign), "Tier 1", 0.01 ether);
+        deployedCampaign.addTier(address(campaign), "Tier 2", 0.025 ether);
         vm.startPrank(USER);
         vm.deal(USER, STARTING_BALANCE);
         

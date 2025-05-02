@@ -35,9 +35,9 @@ contract CrowdfundingTest is Test {
 
     function createTiers() internal {
         vm.startPrank(user1);
-        crowdfunding.createFundTier("Tier 1", 0.01 ether, "Reward 1");
-        crowdfunding.createFundTier("Tier 2", 0.025 ether, "Reward 2");
-        crowdfunding.createFundTier("Tier 3", 0.05 ether, "Reward 3");
+        crowdfunding.addTier("Tier 1", 0.01 ether);
+        crowdfunding.addTier("Tier 2", 0.025 ether);
+        crowdfunding.addTier("Tier 3", 0.05 ether);
         vm.stopPrank();
     }
 

@@ -8,10 +8,10 @@ import { DevOpsTools } from "foundry-devops/src/DevOpsTools.sol";
 
 contract Interactions is Script {
 
-    function createTier(address _mostRecentlyDeployed, string memory _tierName, uint256 _tierAmount, string memory _reward) public {
+    function addTier(address _mostRecentlyDeployed, string memory _tierName, uint256 _tierAmount) public {
         vm.startBroadcast();
         Crowdfunding campaign = Crowdfunding(_mostRecentlyDeployed);
-        campaign.createFundTier(_tierName, _tierAmount, _reward);
+        campaign.addTier(_tierName, _tierAmount);
         vm.stopBroadcast();
     }
 
@@ -24,9 +24,9 @@ contract Interactions is Script {
 
     function run() external {
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment("Crowdfunding", block.chainid);
-        createTier(mostRecentlyDeployed, "Tier 1", 0.01 ether, "Reward 1");
-        createTier(mostRecentlyDeployed, "Tier 2", 0.05 ether, "Reward 2");
-        createTier(mostRecentlyDeployed, "Tier 3", 0.1 ether, "Reward 3");
+        addTier(mostRecentlyDeployed, "Tier 1", 0.01 ether);
+        addTier(mostRecentlyDeployed, "Tier 2", 0.05 ether);
+        addTier(mostRecentlyDeployed, "Tier 3", 0.1 ether);
         fundCampaign(mostRecentlyDeployed, 1);
     }
 

@@ -5,9 +5,11 @@ import "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Crowdfunding} from "./Crowdfunding.sol";
 
 contract CrowdfundingFactory is Ownable {
+
     bool public paused;
 
     struct Campaign {
+        address owner;
         address campaignAddress;
         string title;
         string description;
@@ -53,6 +55,7 @@ contract CrowdfundingFactory is Ownable {
             _imageURL
         );
         Campaign memory newCampaignStruct = Campaign({
+            owner: _owner,
             campaignAddress: address(newCampaign),
             title: _title,
             description: _desc,
@@ -95,4 +98,9 @@ contract CrowdfundingFactory is Ownable {
     function getCamapaignsCount() external view returns (uint256) {
         return campaigns.length;
     }
+
+    function getAllCampaigns() external view returns (Campaign[] memory) {
+        return campaigns;
+    }
+
 }
