@@ -55,7 +55,7 @@ contract CrowdfundingFactoryTest is Test {
         assertEq(factory.getCamapaignsCount(), 1);
 
         (
-            ,
+            ,,
             string memory title,
             string memory description,
             uint256 goal,
@@ -83,7 +83,7 @@ contract CrowdfundingFactoryTest is Test {
             TEST_DURATION,
             TEST_IMAGE
         );
-        (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
+        (, address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
         campaign.addTier("Tier 1", 0.5 ether);
         campaign.addTier("Tier 2", 0.75 ether);
@@ -117,7 +117,7 @@ contract CrowdfundingFactoryTest is Test {
             TEST_DURATION,
             TEST_IMAGE
         );
-        (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
+        (, address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
         campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();
@@ -149,7 +149,7 @@ contract CrowdfundingFactoryTest is Test {
             TEST_DURATION,
             TEST_IMAGE
         );
-        (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
+        (, address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
         campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();
@@ -175,7 +175,7 @@ contract CrowdfundingFactoryTest is Test {
             TEST_DURATION,
             TEST_IMAGE
         );
-        (address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
+        (, address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
         Crowdfunding campaign = Crowdfunding(campaignAddress);
         campaign.addTier("Tier 1", 0.5 ether);
         vm.stopPrank();

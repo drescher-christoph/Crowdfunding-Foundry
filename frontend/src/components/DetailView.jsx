@@ -15,7 +15,7 @@ import {
 import { ethers } from "ethers";
 
 const DetailView = () => {
-  const [balance, setBalance] = useState(0);
+  
   const [tiers, setTiers] = useState([]);
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
   const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -57,26 +57,34 @@ const DetailView = () => {
       console.error("Error fetching tiers:", error);
     }
     if (!isLoading && tiersData) {
-      setBalance(contractBalance);
       console.log("Tiers fetched: ", tiersData);
       setTiers(tiersData);
     }
   }, [tiersCount]);
 
   const calcProgress = () => {
-    if (!balance || !campaign.goal) return 0;
-
-    const numericBalance =
-      typeof balance === "number" ? balance : parseFloat(balance?.value || 0);
-    const numericGoal =
-      typeof campaign.goal === "number"
-        ? campaign.goal
-        : parseFloat(campaign.goal || 0);
-
-    if (numericGoal === 0) return 0;
-
-    const progress = (numericBalance / numericGoal) * 100;
-    return Math.min(progress, 100);
+    if (contractBalance.isLoading) {
+      console.log("Balance is still loading...");
+      return 0; // Zeige 0% Fortschritt, solange die Daten geladen werden
+    }
+  
+    if (!contractBalance.data || !contractBalance.data.value || !campaign.goal) {
+      console.log("No contract balance or goal provided");
+      return 0;
+    }
+  
+    try {
+      const numericBalance = ethers.formatUnits(contractBalance.data.value, 18); // 18 ist die Standard-Dezimalstelle für ETH
+      const numericGoal = typeof campaign.goal === "number" ? campaign.goal : parseFloat(campaign.goal || 0);
+  
+      if (numericGoal === 0) return 0;
+  
+      const progress = (parseFloat(numericBalance) / numericGoal) * 100;
+      return Math.min(progress, 100); // Begrenze den Fortschritt auf maximal 100%
+    } catch (error) {
+      console.error("Error calculating progress:", error);
+      return 0;
+    }
   };
 
   const timeLeft = (unixTimestamp) => {
@@ -115,23 +123,31 @@ const DetailView = () => {
 
       {/* Fortschrittsanzeige + Info */}
       <div className="flex flex-col gap-2">
-        <div className="w-full bg-slate-100 h-3 rounded-full">
-          <div
-            className="bg-purple-600 h-3 rounded-full"
-            style={{ width: `${calcProgress()}%` }}
-          />
-        </div>
-        <div className="flex justify-between text-sm text-slate-500">
-          <span>{timeLeft(campaign.deadline)} Tage verbleibend</span>
-          <span>{calcProgress()}% finanziert</span>
-        </div>
+      <div>
+  {contractBalance.isLoading ? (
+    <p>Loading balance...</p>
+  ) : (
+    <div>
+      <div className="w-full bg-slate-100 h-3 rounded-full">
+        <div
+          className="bg-purple-600 h-3 rounded-full"
+          style={{ width: `${calcProgress()}%` }}
+        />
+      </div>
+      <div className="flex justify-between text-sm text-slate-500">
+        <span>{timeLeft(campaign.deadline)} Tage verbleibend</span>
+        <span>{calcProgress()}% finanziert</span>
+      </div>
+    </div>
+  )}
+</div>
       </div>
 
       {/* Tiers */}
       <div className="flex flex-wrap gap-4">
         {tiers &&
           tiers.length > 0 &&
-          !isError &&
+          !isError && timeLeft(campaign.deadline) > 0 ? (
           tiers.map((tier, tierIndex) => (
             <TierButton
               key={tierIndex}
@@ -142,7 +158,9 @@ const DetailView = () => {
               contractAddress={campaign.campaignAddress}
               abi={CAMPAIGN_ABI}
             />
-          ))}
+          ))) : (
+            <p>Campaign is over</p>
+          )}
 
         {campaign.owner === account.address && (
           <button

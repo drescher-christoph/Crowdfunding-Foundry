@@ -85,6 +85,8 @@ const Dashboard = () => {
                   description={campaign.description}
                   daysLeft={campaign.deadline}
                   progress={campaign.progress}
+                  goal={campaign.goal}
+                  address={campaign.campaignAddress}
                 />
               </Link>
             );
