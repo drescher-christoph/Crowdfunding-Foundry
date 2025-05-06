@@ -60,7 +60,7 @@ contract CrowdfundingFactory is Ownable {
             title: _title,
             description: _desc,
             goal: _goal,
-            deadline: block.timestamp + 30 days,
+            deadline: block.timestamp + (_durationInDays * 1 days),
             imageURL: _imageURL
         });
 

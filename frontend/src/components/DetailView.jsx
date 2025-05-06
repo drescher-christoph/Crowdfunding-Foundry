@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import TierButton from "./TierButton";
 import CreateTierModal from "./CreateTierModal";
@@ -16,6 +16,7 @@ import { ethers } from "ethers";
 
 const DetailView = () => {
   
+  const [campaignState, setCampaignState] = useState("open");
   const [tiers, setTiers] = useState([]);
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
   const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -48,6 +49,13 @@ const DetailView = () => {
     watch: true,
   });
 
+  const { data: cState } = useReadContract({
+    address: campaign.campaignAddress,
+    abi: CAMPAIGN_ABI,
+    functionName: "state",
+    watch: true,
+  });
+
   const contractBalance = useBalance({
     address: campaign.campaignAddress,
   });
@@ -62,23 +70,46 @@ const DetailView = () => {
     }
   }, [tiersCount]);
 
+  useEffect(() => {
+    if (cState === undefined) return;
+    console.log("Campaign state: ", cState);
+    if (cState === 0) {
+      setCampaignState("open");
+    } else if (cState === 1) {
+      setCampaignState("successful");
+    } else if (cState === 2) {
+      setCampaignState("failed");
+    } else if (cState === 3) {
+      setCampaignState("paused");
+    } else {
+      setCampaignState("unknown");
+    }
+  }, []);
+
   const calcProgress = () => {
     if (contractBalance.isLoading) {
       console.log("Balance is still loading...");
       return 0; // Zeige 0% Fortschritt, solange die Daten geladen werden
     }
-  
-    if (!contractBalance.data || !contractBalance.data.value || !campaign.goal) {
+
+    if (
+      !contractBalance.data ||
+      !contractBalance.data.value ||
+      !campaign.goal
+    ) {
       console.log("No contract balance or goal provided");
       return 0;
     }
-  
+
     try {
       const numericBalance = ethers.formatUnits(contractBalance.data.value, 18); // 18 ist die Standard-Dezimalstelle für ETH
-      const numericGoal = typeof campaign.goal === "number" ? campaign.goal : parseFloat(campaign.goal || 0);
-  
+      const numericGoal =
+        typeof campaign.goal === "number"
+          ? campaign.goal
+          : parseFloat(campaign.goal || 0);
+
       if (numericGoal === 0) return 0;
-  
+
       const progress = (parseFloat(numericBalance) / numericGoal) * 100;
       return Math.min(progress, 100); // Begrenze den Fortschritt auf maximal 100%
     } catch (error) {
@@ -99,7 +130,49 @@ const DetailView = () => {
     return daysLeft;
   };
 
+  console.log("Time left: ", timeLeft(campaign.deadline));
+
   if (!campaign) return <div>Kampagne nicht gefunden</div>;
+
+  const renderTiers = () => {
+    return tiers.map((tier, tierIndex) => (
+      <TierButton
+        key={tierIndex}
+        tierIndex={tierIndex}
+        name={tier.name}
+        price={ethers.formatUnits(String(tier.amount))}
+        reward={tier.reward}
+        contractAddress={campaign.campaignAddress}
+        abi={CAMPAIGN_ABI}
+      />
+    ));
+  };
+
+  const renderWithdrawMask = () => {
+    return (
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold text-slate-800">
+          The Campaign has been successfully funded!
+        </h1>
+        <p className="text-slate-600 text-base">
+          This is a withdraw mask for the campaign owner.
+        </p>
+      </div>
+    );
+  };
+
+  const renderRefundMask = () => {
+    return (
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold text-slate-800">
+          The Campaign has failed!
+        </h1>
+        <p className="text-slate-600 text-base">
+          This is a refund mask for the supporter to refund his donation.
+        </p>
+      </div>
+    );
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white border border-slate-200 rounded-2xl shadow-md flex flex-col gap-6">
@@ -118,49 +191,51 @@ const DetailView = () => {
           {campaign.title}
         </h1>
         <p className="text-slate-600 text-base">{campaign.description}</p>
-        <p>Goal: <span className="font-bold">{campaign.goal}ETH</span></p>
+        <p>
+          Goal: <span className="font-bold">{campaign.goal}ETH</span>
+        </p>
+        <p>
+          Campaign State: <span className="font-bold">{campaignState}</span>
+        </p>
       </div>
 
       {/* Fortschrittsanzeige + Info */}
       <div className="flex flex-col gap-2">
-      <div>
-  {contractBalance.isLoading ? (
-    <p>Loading balance...</p>
-  ) : (
-    <div>
-      <div className="w-full bg-slate-100 h-3 rounded-full">
-        <div
-          className="bg-purple-600 h-3 rounded-full"
-          style={{ width: `${calcProgress()}%` }}
-        />
-      </div>
-      <div className="flex justify-between text-sm text-slate-500">
-        <span>{timeLeft(campaign.deadline)} Tage verbleibend</span>
-        <span>{calcProgress()}% finanziert</span>
-      </div>
-    </div>
-  )}
-</div>
+        <div>
+          {contractBalance.isLoading ? (
+            <p>Loading balance...</p>
+          ) : (
+            <div>
+              <div className="w-full bg-slate-100 h-3 rounded-full">
+                <div
+                  className="bg-purple-600 h-3 rounded-full"
+                  style={{ width: `${calcProgress()}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-sm text-slate-500 mt-2">
+                <span>{timeLeft(campaign.deadline)} days left</span>
+                <span>{calcProgress()}% financed</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Tiers */}
       <div className="flex flex-wrap gap-4">
-        {tiers &&
-          tiers.length > 0 &&
-          !isError && timeLeft(campaign.deadline) > 0 ? (
-          tiers.map((tier, tierIndex) => (
-            <TierButton
-              key={tierIndex}
-              tierIndex={tierIndex}
-              name={tier.name}
-              price={ethers.formatUnits(String(tier.amount))}
-              reward={tier.reward}
-              contractAddress={campaign.campaignAddress}
-              abi={CAMPAIGN_ABI}
-            />
-          ))) : (
-            <p>Campaign is over</p>
-          )}
+        {isError ? (
+          <p className="text-slate-500">Error loading tiers.</p>
+        ) : tiers && tiers.length > 0 ? (
+          campaignState === "open" ? (
+            renderTiers()
+          ) : campaignState === "successful" ? (
+            renderWithdrawMask()
+          ) : (
+            renderRefundMask()
+          )
+        ) : (
+          <p className="text-slate-500">No tiers available</p>
+        )}
 
         {campaign.owner === account.address && (
           <button
@@ -172,8 +247,15 @@ const DetailView = () => {
         )}
       </div>
 
-      <p>Contract Address: {campaign.campaignAddress}</p>
-      {/* <p>Contract Balance: {balance}</p> */}
+      {!contractBalance.isLoading && (
+        <div>
+          <p>Contract Address: {campaign.campaignAddress}</p>
+          <p>
+            Contract Balance:{" "}
+            {ethers.formatUnits(contractBalance.data.value, 18)} ETH
+          </p>
+        </div>
+      )}
 
       {isTierModalOpen && (
         <CreateTierModal

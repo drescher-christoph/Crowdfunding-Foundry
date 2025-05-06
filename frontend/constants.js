@@ -1,4 +1,4 @@
-export const FACTORY_ADDRESS = "0x2Ed8FD056c1aAf0404dea47410E76b3AC928e041"; // CrowdfundingFactory
+export const FACTORY_ADDRESS = "0x57b41Ff1141375bF2Af2296aEC55cdc3F945322A"; //"0x2Ed8FD056c1aAf0404dea47410E76b3AC928e041"; Binance Testnet
 export const FACTORY_ABI = [
   { type: "constructor", inputs: [], stateMutability: "nonpayable" },
   {

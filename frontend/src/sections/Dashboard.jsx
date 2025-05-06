@@ -12,9 +12,9 @@ import {
 } from "wagmi";
 import { FACTORY_ADDRESS } from "../../constants";
 import { FACTORY_ABI } from "../../constants";
+import { IoCloseOutline } from "react-icons/io5";
 
 const Dashboard = () => {
-
   const [campaignAddress, setCampaignAddress] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
@@ -63,7 +63,11 @@ const Dashboard = () => {
         </button>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        {isLoading ? (
+        {!account.address ? (
+          <p className="text-center col-span-3 text-gray-500">
+            Bitte verbinde deine Wallet, um Kampagnen zu sehen.
+          </p>
+        ) : isLoading ? (
           <div className="col-span-3 flex justify-center items-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-opacity-75"></div>
           </div>
@@ -72,25 +76,23 @@ const Dashboard = () => {
             Es gibt derzeit keine offenen Kampagnen.
           </p>
         ) : (
-          campaigns.map((campaign) => {
-            return (
-              <Link
-                key={campaign.campaignAddress}
-                to={`/campaigns/${campaign.campaignAddress}`}
-                state={{ campaign }}
-              >
-                <CampaignCard
-                  img={campaign.imageURL}
-                  title={campaign.title}
-                  description={campaign.description}
-                  daysLeft={campaign.deadline}
-                  progress={campaign.progress}
-                  goal={campaign.goal}
-                  address={campaign.campaignAddress}
-                />
-              </Link>
-            );
-          })
+          campaigns.map((campaign) => (
+            <Link
+              key={campaign.campaignAddress}
+              to={`/campaigns/${campaign.campaignAddress}`}
+              state={{ campaign }}
+            >
+              <CampaignCard
+                img={campaign.imageURL}
+                title={campaign.title}
+                description={campaign.description}
+                daysLeft={campaign.deadline}
+                progress={campaign.progress}
+                goal={campaign.goal}
+                address={campaign.campaignAddress}
+              />
+            </Link>
+          ))
         )}
       </div>
 
@@ -116,15 +118,19 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-const CreateCampaignModal = ({ setIsModalOpen, setIsTierModalOpen, setCampaignAddress }) => {
+const CreateCampaignModal = ({
+  setIsModalOpen,
+  setIsTierModalOpen,
+  setCampaignAddress,
+}) => {
   const account = useAccount();
 
-  const [transactionState, setTransactionState] = useState("initial"); // "initial", "signing", "confirming", "success", "failed"
+  const [transactionState, setTransactionState] = useState("open"); // "initial", "signing", "confirming", "success", "failed"
   const [errorMessage, setErrorMessage] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [campaignDescription, setCampaignDescription] = useState("");
   const [campaignGoal, setCampaignGoal] = useState(1);
-  const [campaignDeadline, setCampaignDeadline] = useState(30);
+  const [campaignDeadline, setCampaignDeadline] = useState(1);
   const [campaignImageURL, setCampaignImageURL] = useState("");
   const [createdCampaignAddress, setCreatedCampaignAddress] = useState("");
 
@@ -364,8 +370,12 @@ const CreateCampaignModal = ({ setIsModalOpen, setIsTierModalOpen, setCampaignAd
       )}
       {isSuccess && createdCampaignAddress && (
         <div className="mt-6 bg-gray-100 p-3 rounded-md w-full max-w-md">
-          <p className="text-sm font-medium text-gray-700">Campaign deployed at:</p>
-          <p className="text-xs text-gray-500 break-all">{createdCampaignAddress}</p>
+          <p className="text-sm font-medium text-gray-700">
+            Campaign deployed at:
+          </p>
+          <p className="text-xs text-gray-500 break-all">
+            {createdCampaignAddress}
+          </p>
         </div>
       )}
       <button
@@ -450,10 +460,16 @@ const CreateCampaignModal = ({ setIsModalOpen, setIsTierModalOpen, setCampaignAd
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center backdrop-blur-md">
-      <div className="w-1/2 bg-slate-100 p-6 rounded-md">
+    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center">
+      <div className="w-1/2 bg-slate-100 p-6 rounded-md border-2">
         <div className="flex justify-between items-center mb-4">
           <p className="text-lg font-semibold">{getModalTitle()}</p>
+          <button
+            className="px-3 py-3 bg-slate-600 text-white rounded-full hover:bg-slate-700"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <IoCloseOutline />
+          </button>
           {(transactionState === "initial" ||
             transactionState === "success" ||
             transactionState === "failed") && (
