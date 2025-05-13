@@ -3,6 +3,7 @@ import reactLogo from "../assets/react.svg";
 import { GoPerson } from "react-icons/go";
 import { SlMagnifier } from "react-icons/sl";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import OpenRaise from "../assets/OpenRaise.png";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,7 +16,8 @@ const NavBar = () => {
     <header>
       <nav className="flex justify-between items-center w-[92%] mx-auto py-5 z-10">
         <div>
-          <span className="text-black font-semibold text-3xl">Crowdfunding</span>
+          {/* <span className="text-black font-semibold text-3xl">Crowdfunding</span> */}
+          <img className="h-12 w-auto" src={OpenRaise} alt="logo" />
         </div>
         {isMenuOpen && (
           <div className="fixed inset-0 bg-black/90 z-10 md:hidden">

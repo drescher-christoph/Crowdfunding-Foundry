@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import TierButton from "./TierButton";
 import CreateTierModal from "./CreateTierModal";
+import ActionButton from "./ActionButton";
 import { CAMPAIGN_ABI } from "../../constants";
 import {
   useAccount,
@@ -16,7 +17,7 @@ import { ethers } from "ethers";
 
 const DetailView = () => {
   
-  const [campaignState, setCampaignState] = useState("open");
+  const [campaignState, setCampaignState] = useState("loading");
   const [tiers, setTiers] = useState([]);
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
   const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -84,7 +85,7 @@ const DetailView = () => {
     } else {
       setCampaignState("unknown");
     }
-  }, []);
+  }, [cState]);
 
   const calcProgress = () => {
     if (contractBalance.isLoading) {
@@ -104,14 +105,13 @@ const DetailView = () => {
     try {
       const numericBalance = ethers.formatUnits(contractBalance.data.value, 18); // 18 ist die Standard-Dezimalstelle für ETH
       const numericGoal =
-        typeof campaign.goal === "number"
-          ? campaign.goal
-          : parseFloat(campaign.goal || 0);
+      ethers.formatUnits(campaign.goal, 18)
 
       if (numericGoal === 0) return 0;
 
-      const progress = (parseFloat(numericBalance) / numericGoal) * 100;
-      return Math.min(progress, 100); // Begrenze den Fortschritt auf maximal 100%
+      const progress = (parseFloat(numericBalance) / numericGoal) * 1000;
+      console.log("Calculated Progress: ", progress);
+      return progress; // Begrenze den Fortschritt auf maximal 100%
     } catch (error) {
       console.error("Error calculating progress:", error);
       return 0;
@@ -157,6 +157,10 @@ const DetailView = () => {
         <p className="text-slate-600 text-base">
           This is a withdraw mask for the campaign owner.
         </p>
+        <ActionButton
+          label="Withdraw Funds"
+          action="withdraw"
+          contractAddress={campaign.campaignAddress} />
       </div>
     );
   };
@@ -172,6 +176,28 @@ const DetailView = () => {
         </p>
       </div>
     );
+  };
+
+  const renderTierContent = () => {
+    if (isError) {
+      return <p className="text-slate-500">Error loading tiers.</p>;
+    }
+    
+    if (!tiers || tiers.length === 0) {
+      return <p className="text-slate-500">No tiers available</p>;
+    }
+    
+    // Wenn Tiers vorhanden sind, entscheide basierend auf dem Campaign-Status
+    switch (campaignState) {
+      case "open":
+        return renderTiers();
+      case "successful":
+        return renderWithdrawMask();
+      case "failed":
+        return renderRefundMask();
+      default: 
+        return renderTiers();
+    }
   };
 
   return (
@@ -192,7 +218,7 @@ const DetailView = () => {
         </h1>
         <p className="text-slate-600 text-base">{campaign.description}</p>
         <p>
-          Goal: <span className="font-bold">{campaign.goal}ETH</span>
+          Goal: <span className="font-bold">{ethers.formatEther(campaign.goal)}ETH</span>
         </p>
         <p>
           Campaign State: <span className="font-bold">{campaignState}</span>
@@ -209,12 +235,12 @@ const DetailView = () => {
               <div className="w-full bg-slate-100 h-3 rounded-full">
                 <div
                   className="bg-purple-600 h-3 rounded-full"
-                  style={{ width: `${calcProgress()}%` }}
+                  style={{ width: `${calcProgress() > 100 ? 100 : calcProgress()}%` }}
                 />
               </div>
               <div className="flex justify-between text-sm text-slate-500 mt-2">
                 <span>{timeLeft(campaign.deadline)} days left</span>
-                <span>{calcProgress()}% financed</span>
+                <span>{calcProgress()}% funded</span>
               </div>
             </div>
           )}
@@ -223,21 +249,9 @@ const DetailView = () => {
 
       {/* Tiers */}
       <div className="flex flex-wrap gap-4">
-        {isError ? (
-          <p className="text-slate-500">Error loading tiers.</p>
-        ) : tiers && tiers.length > 0 ? (
-          campaignState === "open" ? (
-            renderTiers()
-          ) : campaignState === "successful" ? (
-            renderWithdrawMask()
-          ) : (
-            renderRefundMask()
-          )
-        ) : (
-          <p className="text-slate-500">No tiers available</p>
-        )}
+        {renderTierContent()}
 
-        {campaign.owner === account.address && (
+        {campaign.owner === account.address && tiersCount <= 2 && (
           <button
             className="px-4 py-2 text-black font-bold rounded-2xl border-2 border-black shadow-md transition-transform hover:bg-purple-500 hover:text-white hover:scale-[1.02] duration-200"
             onClick={() => setIsTierModalOpen(true)}

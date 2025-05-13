@@ -13,6 +13,7 @@ import {
 import { FACTORY_ADDRESS } from "../../constants";
 import { FACTORY_ABI } from "../../constants";
 import { IoCloseOutline } from "react-icons/io5";
+import { ethers } from "ethers";
 
 const Dashboard = () => {
   const [campaignAddress, setCampaignAddress] = useState("");
@@ -129,7 +130,7 @@ const CreateCampaignModal = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [campaignName, setCampaignName] = useState("");
   const [campaignDescription, setCampaignDescription] = useState("");
-  const [campaignGoal, setCampaignGoal] = useState(1);
+  const [campaignGoal, setCampaignGoal] = useState("1.0");
   const [campaignDeadline, setCampaignDeadline] = useState(1);
   const [campaignImageURL, setCampaignImageURL] = useState("");
   const [createdCampaignAddress, setCreatedCampaignAddress] = useState("");
@@ -221,7 +222,7 @@ const CreateCampaignModal = ({
           account.address,
           campaignName,
           campaignDescription,
-          campaignGoal,
+          ethers.parseUnits(String(campaignGoal), 18),
           campaignDeadline,
           campaignImageURL,
         ],
@@ -230,14 +231,6 @@ const CreateCampaignModal = ({
       console.error(error);
       setTransactionState("failed");
       setErrorMessage(error.message || "Error while creating campaign.");
-    }
-  };
-
-  const handleCampaignGoal = (value) => {
-    if (value < 1) {
-      setCampaignGoal(1);
-    } else {
-      setCampaignGoal(value);
     }
   };
 
@@ -273,9 +266,9 @@ const CreateCampaignModal = ({
       ></textarea>
       <label>Campaign Goal (Ether):</label>
       <input
-        type="number"
+        type="text"
         value={campaignGoal}
-        onChange={(e) => handleCampaignGoal(parseInt(e.target.value))}
+        onChange={(e) => setCampaignGoal(e.target.value)}
         className="mb-4 px-4 py-2 bg-slate-300 rounded-md"
       />
       <label>{`Campaign Length (Days)`}</label>
@@ -464,20 +457,15 @@ const CreateCampaignModal = ({
       <div className="w-1/2 bg-slate-100 p-6 rounded-md border-2">
         <div className="flex justify-between items-center mb-4">
           <p className="text-lg font-semibold">{getModalTitle()}</p>
-          <button
-            className="px-3 py-3 bg-slate-600 text-white rounded-full hover:bg-slate-700"
-            onClick={() => setIsModalOpen(false)}
-          >
-            <IoCloseOutline />
-          </button>
+
           {(transactionState === "initial" ||
             transactionState === "success" ||
             transactionState === "failed") && (
             <button
-              className="text-sm px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-700"
+              className="px-3 py-3 bg-slate-600 text-white rounded-full hover:bg-slate-700"
               onClick={() => setIsModalOpen(false)}
             >
-              Close
+              <IoCloseOutline />
             </button>
           )}
         </div>

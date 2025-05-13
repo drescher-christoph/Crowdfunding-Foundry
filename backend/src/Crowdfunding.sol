@@ -32,7 +32,6 @@ contract Crowdfunding {
         uint256 backers;
     }
 
-
     struct Supporter {
         uint256 totalContributed;
         mapping(uint256 => bool) fundedTiers;
@@ -81,18 +80,16 @@ contract Crowdfunding {
     }
 
     function checkAndUpdateState() public {
-        if (state == CampaignState.Active) {
-            if (block.timestamp >= deadline) {
-                state = address(this).balance >= goal
-                    ? CampaignState.Successful
-                    : CampaignState.Failed;
-            } else {
-                state = address(this).balance >= goal
-                    ? CampaignState.Successful
-                    : CampaignState.Active;
-            }
+    if (block.timestamp >= deadline) {  
+        if (address(this).balance >= goal) {
+            state = CampaignState.Successful; 
+        } else {
+            state = CampaignState.Failed; 
         }
+    } else {  
+        state = CampaignState.Active; 
     }
+}
 
     function fund(uint256 _tierIndex) public payable campaignOpen {
         if (block.timestamp >= deadline) revert CampaignEnded();
@@ -132,10 +129,7 @@ contract Crowdfunding {
         emit FundsRefunded(msg.sender, balance);
     }
 
-    function addTier(
-        string memory _name,
-        uint256 _amount
-    ) public onlyOwner {
+    function addTier(string memory _name, uint256 _amount) public onlyOwner {
         require(_amount > 0, "Amount must be greater than 0.");
         tiers.push(Tier(_name, _amount, 0));
 
@@ -144,7 +138,7 @@ contract Crowdfunding {
 
     function removeTier(uint256 _index) public onlyOwner {
         require(_index < tiers.length, "Tier does not exist.");
-        tiers[_index] = tiers[tiers.length -1];
+        tiers[_index] = tiers[tiers.length - 1];
         tiers.pop();
     }
 
@@ -155,5 +149,4 @@ contract Crowdfunding {
     function getTiers() public view returns (Tier[] memory) {
         return tiers;
     }
-
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useBalance } from "wagmi";
+import { useBalance, useReadContract } from "wagmi";
 import { ethers } from "ethers";
+import { CAMPAIGN_ABI } from "../../constants";
 
 const CampaignCard = ({
   img,
@@ -11,9 +12,38 @@ const CampaignCard = ({
   goal,
   address,
 }) => {
+  const [campaignState, setCampaignState] = useState("loading");
+  const [stateColor, setStateColor] = useState("#A0C878");
+
   const { data: contractBalance } = useBalance({
     address: address,
   });
+
+  const { data: cState } = useReadContract({
+    address: address,
+    abi: CAMPAIGN_ABI,
+    functionName: "state",
+    watch: true,
+  });
+
+  useEffect(() => {
+    if (cState === undefined) return;
+    if (cState === 0) {
+      setCampaignState("Active");
+      setStateColor("#A0C878");
+    } else if (cState === 1) {
+      setCampaignState("Successful");
+      setStateColor("#DAD2FF");
+    } else if (cState === 2) {
+      setCampaignState("Failed");
+      setStateColor("#E55050");
+    } else if (cState === 3) {
+      setCampaignState("Paused");
+      setStateColor("bg-yellow-500");
+    } else {
+      setCampaignState("unknown");
+    }
+  }, [cState]);
 
   const timeLeft = (unixTimestamp) => {
     const currentTime = Math.floor(Date.now() / 1000);
@@ -34,10 +64,10 @@ const CampaignCard = ({
     }
 
     const numericBalance = ethers.formatUnits(contractBalance.value);
-    const numericGoal = typeof goal === "number" ? goal : parseFloat(goal || 0);
+    const numericGoal = ethers.formatUnits(goal, 18);
 
     if (numericGoal === 0) return 0;
-    const progress = (numericBalance / numericGoal) * 100;
+    const progress = (numericBalance / numericGoal) * 1000;
     console.log("Numeric Balance: ", numericBalance);
     console.log("Numeric Goal: ", numericGoal);
     console.log("Progress: ", progress);
@@ -47,8 +77,11 @@ const CampaignCard = ({
   return (
     <div className="flex flex-col justify-between w-full max-w-sm bg-white border-2 rounded-2xl shadow-md transition-transform hover:scale-[1.02] duration-200">
       {/* Image */}
-      <div className="w-full h-48 overflow-hidden rounded-t-2xl">
+      <div className="w-full h-48 overflow-hidden rounded-t-2xl relative">
         <img className="w-full h-full object-cover" src={img} alt="Campaign" />
+        <div className="absolute top-2 right-2 z-30 text-black font-medium rounded-2xl border border-black px-2 py-1" style={{ backgroundColor: stateColor, opacity: 0.8 }}>
+          {campaignState}
+        </div>
       </div>
 
       {/* Content */}
@@ -60,7 +93,7 @@ const CampaignCard = ({
         <div className="w-full bg-slate-100 rounded-full h-2">
           <div
             className="bg-purple-500 h-2 rounded-full"
-            style={{ width: `${calcProgress()}%` }}
+            style={{ width: `${calcProgress() > 100 ? 100 : calcProgress()}%` }}
           />
         </div>
 
