@@ -67,11 +67,8 @@ const CampaignCard = ({
     const numericGoal = ethers.formatUnits(goal, 18);
 
     if (numericGoal === 0) return 0;
-    const progress = (numericBalance / numericGoal) * 1000;
-    console.log("Numeric Balance: ", numericBalance);
-    console.log("Numeric Goal: ", numericGoal);
-    console.log("Progress: ", progress);
-    return progress > 100 ? 100 : progress;
+    const progress = (numericBalance / numericGoal) * 100;
+    return progress;
   };
 
   return (
@@ -79,7 +76,7 @@ const CampaignCard = ({
       {/* Image */}
       <div className="w-full h-48 overflow-hidden rounded-t-2xl relative">
         <img className="w-full h-full object-cover" src={img} alt="Campaign" />
-        <div className="absolute top-2 right-2 z-30 text-black font-medium rounded-2xl border border-black px-2 py-1" style={{ backgroundColor: stateColor, opacity: 0.8 }}>
+        <div className="absolute top-2 right-2 z-1 text-black font-medium rounded-2xl border border-black px-2 py-1" style={{ backgroundColor: stateColor, opacity: 0.8 }}>
           {campaignState}
         </div>
       </div>

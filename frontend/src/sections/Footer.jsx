@@ -8,7 +8,7 @@ const Footer = () => {
         <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
           © 2025{" "}
           <a href="https://flowbite.com/" class="hover:underline">
-            Win3™
+            OpenRaise™
           </a>
           . All Rights Reserved.
         </span>

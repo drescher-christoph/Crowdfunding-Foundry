@@ -36,6 +36,9 @@ import img2 from "./assets/images/product-stock.jpg";
 import img3 from "./assets/images/image1.jpg";
 import img4 from "./assets/images/image2.jpg";
 import img5 from "./assets/images/image3.jpg";
+import HowItWorks from "./sections/HowItWorks";
+import UserFundings from "./sections/UserFundings";
+import UserCampaigns from "./sections/UserCampaigns";
 
 const data = [
   {
@@ -199,6 +202,40 @@ function App() {
                       </>
                     }
                   />
+
+                  {/* Route für How It Works */}
+                  <Route
+                    path="/how-it-works"
+                    element={
+                      <>
+                        <HowItWorks />
+                        <Footer />
+                      </>
+                    }
+                  />
+
+                  {/* Route für User Fundings */}
+                  <Route
+                    path="/user-fundings/:userAddress"
+                    element={
+                      <>
+                        <UserFundings />
+                        <Footer />
+                      </>
+                    }
+                  />
+
+                  {/* Route für User Campaigns */}
+                  <Route
+                    path="/user-campaigns/:userAddress"
+                    element={
+                      <>
+                        <UserCampaigns />
+                        <Footer />
+                      </>
+                    }
+                  />
+                  
                 </Routes>
               </main>
             </Router>

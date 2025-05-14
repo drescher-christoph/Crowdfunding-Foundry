@@ -82,7 +82,7 @@ const CreateTierModal = ({ setIsTierModalOpen, campaignAddress }) => {
         functionName: "addTier",
         args: [
           tierName,
-          ethers.parseUnits(tierAmount),
+          ethers.parseUnits(String(tierAmount), 18),
         ],
       });
     } catch (error) {
@@ -274,7 +274,7 @@ const CreateTierModal = ({ setIsTierModalOpen, campaignAddress }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center backdrop-blur-md">
+    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center backdrop-blur-md z-5">
       <div className="w-1/2 bg-slate-100 p-6 rounded-md">
         <div className="flex justify-between items-center mb-4">
           <p className="text-lg font-semibold">{getModalTitle()}</p>

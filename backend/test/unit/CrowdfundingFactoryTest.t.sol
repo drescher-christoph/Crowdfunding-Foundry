@@ -232,4 +232,31 @@ contract CrowdfundingFactoryTest is Test {
             TEST_IMAGE
         );
     }
+
+    function testGetSupportedCampaigns() public {
+        vm.startPrank(user1);
+        factory.createCampaign(
+            user1,
+            TEST_TITLE,
+            TEST_DESC,
+            TEST_GOAL,
+            TEST_DURATION,
+            TEST_IMAGE
+        );
+        (, address campaignAddress, , , , , ) = factory.userCampaigns(user1, 0);
+        Crowdfunding campaign = Crowdfunding(campaignAddress);
+        campaign.addTier("Tier 1", 0.5 ether);
+        campaign.addTier("Tier 2", 0.75 ether);
+        vm.stopPrank();
+
+        vm.startPrank(user2);
+        vm.deal(user2, 2 ether);
+        campaign.fund{value: 0.5 ether}(0);
+        vm.stopPrank();
+
+
+        CrowdfundingFactory.Campaign[] memory supportedCampaigns = factory
+            .getSupportedCampaigns(user2);
+        assertEq(supportedCampaigns.length, 1);
+    }
 }

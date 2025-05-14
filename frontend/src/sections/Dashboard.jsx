@@ -453,7 +453,7 @@ const CreateCampaignModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center">
+    <div className="fixed inset-0 bg-opacity-15 flex justify-center items-center z-5">
       <div className="w-1/2 bg-slate-100 p-6 rounded-md border-2">
         <div className="flex justify-between items-center mb-4">
           <p className="text-lg font-semibold">{getModalTitle()}</p>

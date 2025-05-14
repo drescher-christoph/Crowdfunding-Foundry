@@ -2,15 +2,17 @@ import { useState } from "react";
 import reactLogo from "../assets/react.svg";
 import { GoPerson } from "react-icons/go";
 import { SlMagnifier } from "react-icons/sl";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import OpenRaise from "../assets/OpenRaise.png";
+import { Link } from "react-router-dom";
+import { useAccount } from "wagmi";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const onToggleMenu = () => {
-    
-  }
+  const account = useAccount();
+
+  const onToggleMenu = () => {};
 
   return (
     <header>
@@ -59,19 +61,25 @@ const NavBar = () => {
         >
           <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 font-poppins">
             <li>
-              <a class="text-gray-700 hover:text-gray-500" href="#">
-                Products
-              </a>
+              <Link key={"howItWorks"} to={`/how-it-works`}>
+                <a class="text-gray-700 hover:text-gray-500" href="#">
+                  How it works
+                </a>
+              </Link>
             </li>
             <li>
-              <a class="text-gray-700 hover:text-gray-500" href="#">
-                Solution
-              </a>
+              <Link key={"howItWorks"} to={`/user-fundings/${account.address}`}>
+                <a class="text-gray-700 hover:text-gray-500" href="#">
+                  Your Funds
+                </a>
+              </Link>
             </li>
             <li>
-              <a class="text-gray-700 hover:text-gray-500" href="#">
-                Resource
-              </a>
+              <Link key={"howItWorks"} to={`/user-campaigns/${account.address}`}>
+                <a class="text-gray-700 hover:text-gray-500" href="#">
+                  Your Campaigns
+                </a>
+              </Link>
             </li>
           </ul>
         </div>
