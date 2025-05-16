@@ -28,7 +28,20 @@ const ActionButton = ({ label, action, contractAddress }) => {
     }
 
     const refund = async() => {
-
+      setLoading(true);
+        try {
+            writeContract({
+                    abi: CAMPAIGN_ABI,
+                    address: contractAddress,
+                    functionName: "refund",
+                  });
+        } catch (error) {
+            alert("Error refunding: " + error.message);
+            console.error("Error refunding funds:", error);
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
   return (

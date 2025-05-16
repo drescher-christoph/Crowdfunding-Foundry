@@ -31,6 +31,13 @@ const DetailView = () => {
   const campaign = state.campaign;
 
   const {
+    data: hash,
+    writeContract,
+    isPending: isWritePending,
+    error: writeError,
+  } = useWriteContract();
+
+  const {
     data: tiersData,
     isLoading,
     isError,
@@ -86,6 +93,18 @@ const DetailView = () => {
     }
   }, [cState]);
 
+  const updateCampaign = async() => {
+    try {
+      writeContract({
+              address: campaign.campaignAddress,
+              abi: CAMPAIGN_ABI,
+              functionName: "checkAndUpdateState",
+            });
+    } catch (e) {
+      console.log("Error updating contract: ", e)
+    }
+  }
+
   const calcProgress = () => {
     if (contractBalance.isLoading) {
       console.log("Balance is still loading...");
@@ -126,7 +145,10 @@ const DetailView = () => {
     }
 
     const daysLeft = Math.floor(timeDifference / (60 * 60 * 24)); // Sekunden in Tage umrechnen
-    return daysLeft;
+    const hoursLeft = Math.floor((timeDifference % (60 * 60 * 24)) / (60 * 60));
+    const minutesLeft = Math.floor((timeDifference % (60 * 60)) / 60);
+    const timeLeftString = `${daysLeft} days, ${hoursLeft} hours, ${minutesLeft} minutes`;
+    return timeLeftString;
   };
 
   console.log("Time left: ", timeLeft(campaign.deadline));
@@ -235,6 +257,9 @@ const DetailView = () => {
         <p>
           Campaign State: <span className="font-bold">{campaignState}</span>
         </p>
+        <p>
+          Campaign Creator: <span className="font-bold">{campaign.owner}</span>
+        </p>
       </div>
 
       {/* Fortschrittsanzeige + Info */}
@@ -253,7 +278,7 @@ const DetailView = () => {
                 />
               </div>
               <div className="flex justify-between text-sm text-slate-500 mt-2">
-                <span>{timeLeft(campaign.deadline)} days left</span>
+                <span>{timeLeft(campaign.deadline)}</span>
                 <span>{calcProgress()}% funded</span>
               </div>
             </div>
@@ -265,7 +290,7 @@ const DetailView = () => {
       <div className="flex flex-wrap gap-4">
         {renderTierContent()}
 
-        {campaign.owner === account.address && tiersCount <= 2 && (
+        {campaign.owner === account.address && tiersCount <= 2 && campaignState != "failed" && campaignState != "successful" && (
           <button
             className="px-4 py-2 text-black font-bold rounded-2xl border-2 border-black shadow-md transition-transform hover:bg-purple-500 hover:text-white hover:scale-[1.02] duration-200"
             onClick={() => setIsTierModalOpen(true)}
@@ -277,11 +302,18 @@ const DetailView = () => {
 
       {!contractBalance.isLoading && (
         <div>
-          <p>Contract Address: {campaign.campaignAddress}</p>
+          <p>Contract Address: <a className="text-blue-500" href={`https://sepolia.etherscan.io/address/${campaign.campaignAddress}`}>{campaign.campaignAddress}</a></p>
           <p>
             Contract Balance:{" "}
             {ethers.formatUnits(contractBalance.data.value, 18)} ETH
           </p>
+
+          <button
+          className="px-4 py-2 mt-10 text-black font-bold rounded-2xl border-2 border-black shadow-md transition-transform hover:bg-purple-500 hover:text-white hover:scale-[1.02] duration-200"
+          onClick={updateCampaign}
+        >
+          Update
+        </button>
         </div>
       )}
 

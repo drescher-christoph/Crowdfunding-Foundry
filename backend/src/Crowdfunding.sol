@@ -55,6 +55,7 @@ contract Crowdfunding {
     }
 
     modifier campaignOpen() {
+        checkAndUpdateState();
         require(
             state == CampaignState.Active || state == CampaignState.Successful,
             "Campaign is not active"

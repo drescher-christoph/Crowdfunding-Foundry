@@ -1,4 +1,4 @@
-export const FACTORY_ADDRESS = "0x57b41Ff1141375bF2Af2296aEC55cdc3F945322A"; //"0x2Ed8FD056c1aAf0404dea47410E76b3AC928e041"; Binance Testnet
+export const FACTORY_ADDRESS = "0xD43fe1B09d603DcA9c4394433039Cc8E9c5dC238"; //"0x57b41Ff1141375bF2Af2296aEC55cdc3F945322A"; Alt //"0x2Ed8FD056c1aAf0404dea47410E76b3AC928e041"; Binance Testnet
 export const FACTORY_ABI = [
   { type: "constructor", inputs: [], stateMutability: "nonpayable" },
   {
@@ -68,6 +68,28 @@ export const FACTORY_ABI = [
         name: "",
         type: "tuple",
         internalType: "struct CrowdfundingFactory.Campaign",
+        components: [
+          { name: "owner", type: "address", internalType: "address" },
+          { name: "campaignAddress", type: "address", internalType: "address" },
+          { name: "title", type: "string", internalType: "string" },
+          { name: "description", type: "string", internalType: "string" },
+          { name: "goal", type: "uint256", internalType: "uint256" },
+          { name: "deadline", type: "uint256", internalType: "uint256" },
+          { name: "imageURL", type: "string", internalType: "string" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getSupportedCampaigns",
+    inputs: [{ name: "_user", type: "address", internalType: "address" }],
+    outputs: [
+      {
+        name: "",
+        type: "tuple[]",
+        internalType: "struct CrowdfundingFactory.Campaign[]",
         components: [
           { name: "owner", type: "address", internalType: "address" },
           { name: "campaignAddress", type: "address", internalType: "address" },

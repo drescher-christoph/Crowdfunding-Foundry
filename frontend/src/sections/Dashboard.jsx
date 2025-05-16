@@ -131,7 +131,7 @@ const CreateCampaignModal = ({
   const [campaignName, setCampaignName] = useState("");
   const [campaignDescription, setCampaignDescription] = useState("");
   const [campaignGoal, setCampaignGoal] = useState("1.0");
-  const [campaignDeadline, setCampaignDeadline] = useState(1);
+  const [campaignDeadline, setCampaignDeadline] = useState(3);
   const [campaignImageURL, setCampaignImageURL] = useState("");
   const [createdCampaignAddress, setCreatedCampaignAddress] = useState("");
 
@@ -143,7 +143,7 @@ const CreateCampaignModal = ({
   } = useWriteContract();
 
   const {
-    data: receipt, // Receipt hinzugefügt
+    data: receipt,
     isLoading: isConfirming,
     isSuccess,
     isError: isTransactionError,
@@ -152,7 +152,6 @@ const CreateCampaignModal = ({
     hash,
   });
 
-  // Update transaction state based on transaction status
   useEffect(() => {
     if (isWritePending) {
       setTransactionState("signing");
@@ -210,7 +209,6 @@ const CreateCampaignModal = ({
     }
   }, [receipt]);
 
-  // Deploy contract from CrowdfundingFactory
   const handleDeployContract = async () => {
     try {
       console.log("Deploying contract...");

@@ -5,7 +5,6 @@ import "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Crowdfunding} from "./Crowdfunding.sol";
 
 contract CrowdfundingFactory is Ownable {
-
     bool public paused;
 
     struct Campaign {
@@ -83,32 +82,32 @@ contract CrowdfundingFactory is Ownable {
     }
 
     function getSupportedCampaigns(
-    address _user
-) external view returns (Campaign[] memory) {
-    uint256 supportedCount = 0;
+        address _user
+    ) external view returns (Campaign[] memory) {
+        uint256 supportedCount = 0;
 
-    // Zähle die Anzahl der unterstützten Kampagnen
-    for (uint256 i = 0; i < campaigns.length; i++) {
-        Crowdfunding campaign = Crowdfunding(campaigns[i].campaignAddress);
-        if (campaign.supporters(_user) > 0) {
-            supportedCount++;
+        // Zähle die Anzahl der unterstützten Kampagnen
+        for (uint256 i = 0; i < campaigns.length; i++) {
+            Crowdfunding campaign = Crowdfunding(campaigns[i].campaignAddress);
+            if (campaign.supporters(_user) > 0) {
+                supportedCount++;
+            }
         }
-    }
 
-    // Erstelle ein Array für die unterstützten Kampagnen
-    Campaign[] memory supportedCampaigns = new Campaign[](supportedCount);
-    uint256 index = 0;
+        // Erstelle ein Array für die unterstützten Kampagnen
+        Campaign[] memory supportedCampaigns = new Campaign[](supportedCount);
+        uint256 index = 0;
 
-    for (uint256 i = 0; i < campaigns.length; i++) {
-        Crowdfunding campaign = Crowdfunding(campaigns[i].campaignAddress);
-        if (campaign.supporters(_user) > 0) {
-            supportedCampaigns[index] = campaigns[i];
-            index++;
+        for (uint256 i = 0; i < campaigns.length; i++) {
+            Crowdfunding campaign = Crowdfunding(campaigns[i].campaignAddress);
+            if (campaign.supporters(_user) > 0) {
+                supportedCampaigns[index] = campaigns[i];
+                index++;
+            }
         }
-    }
 
-    return supportedCampaigns;
-}
+        return supportedCampaigns;
+    }
 
     function getUserCampaigns(
         address _user
@@ -130,5 +129,4 @@ contract CrowdfundingFactory is Ownable {
     function getAllCampaigns() external view returns (Campaign[] memory) {
         return campaigns;
     }
-
 }

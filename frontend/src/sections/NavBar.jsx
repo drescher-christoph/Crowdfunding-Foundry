@@ -56,7 +56,7 @@ const NavBar = () => {
         flex 
         items-center 
         px-5
-        z-15
+        z-5
       `}
         >
           <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 font-poppins">
