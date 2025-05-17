@@ -29,7 +29,7 @@ import {
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const WALLET_CONNECT_PROJECT_ID = import.meta.env
-  .VITE_WALLET_CONNECT_PROJECT_ID;
+  .WALLET_CONNECT_PROJECT_ID;
 console.log("App Project ID: " + WALLET_CONNECT_PROJECT_ID);
 
 import HowItWorks from "./sections/HowItWorks";
