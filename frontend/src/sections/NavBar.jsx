@@ -19,7 +19,11 @@ const NavBar = () => {
       <nav className="flex justify-between items-center w-[92%] mx-auto py-5 z-10">
         <div>
           {/* <span className="text-black font-semibold text-3xl">Crowdfunding</span> */}
-          <img className="h-12 w-auto" src={OpenRaise} alt="logo" />
+          <Link
+              to={`/`}
+            >
+              <img className="h-12 w-auto" src={OpenRaise} alt="logo" />
+            </Link>
         </div>
         {isMenuOpen && (
           <div className="fixed inset-0 bg-black/90 z-10 md:hidden">

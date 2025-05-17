@@ -86,7 +86,6 @@ contract CrowdfundingFactory is Ownable {
     ) external view returns (Campaign[] memory) {
         uint256 supportedCount = 0;
 
-        // Zähle die Anzahl der unterstützten Kampagnen
         for (uint256 i = 0; i < campaigns.length; i++) {
             Crowdfunding campaign = Crowdfunding(campaigns[i].campaignAddress);
             if (campaign.supporters(_user) > 0) {
