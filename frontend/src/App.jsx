@@ -29,7 +29,7 @@ import {
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const WALLET_CONNECT_PROJECT_ID = import.meta.env
-  .WALLET_CONNECT_PROJECT_ID;
+  .VITE_WALLET_CONNECT_PROJECT_ID;
 console.log("App Project ID: " + WALLET_CONNECT_PROJECT_ID);
 
 import HowItWorks from "./sections/HowItWorks";
@@ -52,7 +52,7 @@ function App() {
       sepolia,
       bsc,
     ],
-    ssr: true,
+    ssr: true, 
   });
 
   return (
@@ -63,6 +63,7 @@ function App() {
             <NavBar />
             <main>
               <Routes>
+                
                 <Route
                   path="/"
                   element={
@@ -73,6 +74,7 @@ function App() {
                   }
                 />
 
+                
                 <Route
                   path="/campaigns/:campaignId"
                   element={
@@ -83,6 +85,7 @@ function App() {
                   }
                 />
 
+                
                 <Route
                   path="/how-it-works"
                   element={
@@ -93,6 +96,7 @@ function App() {
                   }
                 />
 
+                
                 <Route
                   path="/user-fundings/:userAddress"
                   element={
