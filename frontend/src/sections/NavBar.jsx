@@ -19,11 +19,9 @@ const NavBar = () => {
       <nav className="flex justify-between items-center w-[92%] mx-auto py-5 z-10">
         <div>
           {/* <span className="text-black font-semibold text-3xl">Crowdfunding</span> */}
-          <Link
-              to={`/`}
-            >
-              <img className="h-12 w-auto" src={OpenRaise} alt="logo" />
-            </Link>
+          <Link to={`/`}>
+            <img className="h-12 w-auto" src={OpenRaise} alt="logo" />
+          </Link>
         </div>
         {isMenuOpen && (
           <div className="fixed inset-0 bg-black/90 z-10 md:hidden">
@@ -79,7 +77,10 @@ const NavBar = () => {
               </Link>
             </li>
             <li>
-              <Link key={"howItWorks"} to={`/user-campaigns/${account.address}`}>
+              <Link
+                key={"howItWorks"}
+                to={`/user-campaigns/${account.address}`}
+              >
                 <a class="text-gray-700 hover:text-gray-500" href="#">
                   Your Campaigns
                 </a>
@@ -88,14 +89,6 @@ const NavBar = () => {
           </ul>
         </div>
         <div className="flex items-center gap-6">
-          {/* <div className="flex flex-row justify-between items-center gap-2">
-            <button className="rounded-full border-2 p-2 shadow-md transition-transform border-black hover:bg-purple-500 hover:text-white hover:scale-[1.02] duration-200">
-              <GoPerson size={20} />
-            </button>
-            <button className="rounded-full border-2 p-2 shadow-md transition-transform border-black hover:bg-purple-500 hover:text-white hover:scale-[1.02] duration-200">
-              <SlMagnifier size={20} />
-            </button>
-          </div> */}
           <ConnectButton />
           <div
             onClick={onToggleMenu}

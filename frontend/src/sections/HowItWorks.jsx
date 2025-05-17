@@ -3,14 +3,12 @@ import React from "react";
 const HowItWorks = () => {
   return (
     <>
-      {/* Header */}
       <div className="h-20 bg-[#eedac6] flex justify-center items-center">
         <h2 className="font-semibold text-2xl text-gray-800">
           How OpenRaise works
         </h2>
       </div>
 
-      {/* Content */}
       <div className="flex flex-col justify-center gap-6 p-6 bg-white rounded-2xl my-10 mx-20">
         <div>
           <p className="text-left text-lg font-bold text-gray-700">
@@ -30,10 +28,13 @@ const HowItWorks = () => {
               You remain in full control of your campaign and funds
             </li>
           </ul>
-          <p className="text-left text-gray-600 leading-relaxed">Your project is then stored on the blockchain — transparent and tamper-proof.</p>
+          <p className="text-left text-gray-600 leading-relaxed">
+            Your project is then stored on the blockchain — transparent and
+            tamper-proof.
+          </p>
         </div>
       </div>
-      
+
       <div className="flex flex-col justify-center gap-2 p-6 bg-white rounded-2xl my-10 mx-20">
         <div>
           <p className="text-left text-lg font-bold text-gray-700">
@@ -44,9 +45,7 @@ const HowItWorks = () => {
             Simply provide:
           </p>
           <ul className="list-disc list-inside text-gray-600 mt-2 pl-4">
-            <li className="hover:text-gray-800 transition-colors">
-              Title
-            </li>
+            <li className="hover:text-gray-800 transition-colors">Title</li>
             <li className="hover:text-gray-800 transition-colors">
               Description
             </li>
@@ -60,7 +59,10 @@ const HowItWorks = () => {
               Support tiers
             </li>
           </ul>
-          <p className="text-left text-gray-600 leading-relaxed">Your project is then stored on the blockchain — transparent and tamper-proof.</p>
+          <p className="text-left text-gray-600 leading-relaxed">
+            Your project is then stored on the blockchain — transparent and
+            tamper-proof.
+          </p>
         </div>
       </div>
     </>

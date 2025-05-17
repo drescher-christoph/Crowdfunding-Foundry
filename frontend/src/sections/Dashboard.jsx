@@ -23,7 +23,6 @@ const Dashboard = () => {
 
   const account = useAccount();
 
-  // Verwende useContractRead, um die Daten direkt zu lesen
   const {
     data: campaignsData,
     isLoading,
@@ -32,13 +31,13 @@ const Dashboard = () => {
     address: FACTORY_ADDRESS,
     abi: FACTORY_ABI,
     functionName: "getAllCampaigns",
-    watch: true, // Automatische Aktualisierung bei Änderungen
+    watch: true, 
   });
 
   useEffect(() => {
     if (!isLoading && !isError && campaignsData) {
       console.log("Campaigns fetched: ", campaignsData);
-      setCampaigns(campaignsData); // Aktualisiere den Zustand mit den Daten
+      setCampaigns(campaignsData); 
     }
   }, [campaignsData, isLoading, isError]);
 
@@ -102,7 +101,6 @@ const Dashboard = () => {
           setIsModalOpen={setIsModalOpen}
           setIsTierModalOpen={setIsTierModalOpen}
           setCampaignAddress={setCampaignAddress}
-          // refetch={refetch}
         />
       )}
 
@@ -110,7 +108,6 @@ const Dashboard = () => {
         <CreateTierModal
           setIsTierModalOpen={setIsTierModalOpen}
           campaignAddress={campaignAddress}
-          // refetch={refetch}
         />
       )}
     </div>
