@@ -176,13 +176,15 @@ const DetailView = () => {
           The Campaign has been successfully funded!
         </h1>
         <p className="text-slate-600 text-base">
-          This is a withdraw mask for the campaign owner.
+          {account.address === campaign.owner ? ("Congrats, you can now withdraw your collected funds") : ("The creator is grateful for the support and looks forward to the implementation of the project")}
         </p>
-        <ActionButton
+        {account.address === campaign.owner && (
+          <ActionButton
           label="Withdraw Funds"
           action="withdraw"
           contractAddress={campaign.campaignAddress}
         />
+        )}
       </div>
     );
   };

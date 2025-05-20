@@ -65,7 +65,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-3 gap-4">
         {!account.address ? (
           <p className="text-center col-span-3 text-gray-500">
-            Bitte verbinde deine Wallet, um Kampagnen zu sehen.
+            Please connect your wallet to see open campaigns
           </p>
         ) : isLoading ? (
           <div className="col-span-3 flex justify-center items-center">
@@ -73,7 +73,7 @@ const Dashboard = () => {
           </div>
         ) : campaigns.length === 0 ? (
           <p className="text-center col-span-3 text-gray-500">
-            Es gibt derzeit keine offenen Kampagnen.
+            There are currently no open campaigns.
           </p>
         ) : (
           campaigns.map((campaign) => (
@@ -128,7 +128,7 @@ const CreateCampaignModal = ({
   const [campaignName, setCampaignName] = useState("");
   const [campaignDescription, setCampaignDescription] = useState("");
   const [campaignGoal, setCampaignGoal] = useState("1.0");
-  const [campaignDeadline, setCampaignDeadline] = useState(3);
+  const [campaignDeadline, setCampaignDeadline] = useState(31);
   const [campaignImageURL, setCampaignImageURL] = useState("");
   const [createdCampaignAddress, setCreatedCampaignAddress] = useState("");
 
